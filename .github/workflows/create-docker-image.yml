@@ -31,7 +31,7 @@ jobs:
       run: |
         docker run -d -p 3000:3000 --name test-container ${{ secrets.DOCKERHUB_USERNAME }}/docker-image:latest
         sleep 10
-        curl -s http://localhost:3000/health
+        curl --fail -s http://localhost:3000/health
 
 
     # - name: Push Docker Image
