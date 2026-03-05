@@ -5,12 +5,13 @@ const PORT = process.env.PORT || 3000;
 
 // Health route
 app.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "ok",
-    message: "Hi Manoranjan, Server is running.",
-    uptime: process.uptime(),
-    timestamp: new Date()
-  });
+  // res.status(200).json({
+  //   status: "ok",
+  //   message: "Hi Manoranjan, Server is running.",
+  //   uptime: process.uptime(),
+  //   timestamp: new Date()
+  // });
+  throw new Error("Simulated server error for testing.");
 });
 
 // Start server
