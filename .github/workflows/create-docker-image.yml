@@ -33,6 +33,26 @@ jobs:
         sleep 10
         curl --fail -s http://localhost:3000/health
 
+    - name: Push Docker Image
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/docker-image:latest
 
-    # - name: Push Docker Image
-    #   run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/docker-image:latest
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/docker-image:latest
+          docker stop app || true
+          docker rm app || true
+          docker run -d -p 3000:3000 --name app ${{ secrets.DOCKERHUB_USERNAME }}/docker-image:latest
+          EOF
