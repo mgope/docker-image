@@ -37,7 +37,7 @@ jobs:
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/docker-image:latest
 
   deploy:
-    needs: build-and-push
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
